@@ -1,3 +1,6 @@
+AllCops:
+  Exclude:
+    - 'new_release/**/*'
 Style/Documentation:
   Enabled: false
 Metrics/LineLength:

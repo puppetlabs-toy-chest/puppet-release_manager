@@ -25,13 +25,17 @@ module ReleaseManager
       def prep_agent
         file_helper.create_dir(RELEASE_DIR)
         clone_agent
-        git_helper.fetch_all
         git_helper.checkout(source_branch)
       end
 
       def prep_components
-        resolver.each_component do |name, url, ref|
-          result[name] = DiffGenerator.generate(name, url, ref)
+        resolver.each_component do |name, url, ref, is_module|
+          result[name] = DiffGenerator.generate(
+            name: name,
+            url: url,
+            ref: ref,
+            is_module: is_module
+          )
         end
       end
 

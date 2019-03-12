@@ -9,8 +9,12 @@ module ReleaseManager
 
           Helpers::File.each_file(AGENT_DIR.join('configs', 'components', '*.json')) do |file_name|
             json = JSON.parse(Helpers::File.read(file_name))
-            ref  = module?(file_name) ? 'master' : json['ref']
-            yield(resolve_name(file_name, json['url']), json['url'], ref)
+            yield(
+              resolve_name(file_name, json['url']),
+              json['url'],
+              json['ref'],
+              module?(file_name)
+            )
           end
         end
 

@@ -3,14 +3,15 @@
 module ReleaseManager
   module ComponentsDiff
     class DiffGenerator
-      def self.generate(name, url, ref)
-        new(name, url, ref).generate
+      def self.generate(args)
+        new(args).generate
       end
 
-      def initialize(name, url, ref)
-        @name = name
-        @url  = url
-        @ref  = ref
+      def initialize(args)
+        @name      = args[:name]
+        @url       = args[:url]
+        @ref       = args[:ref]
+        @is_module = args[:is_module]
       end
 
       def generate
@@ -26,7 +27,7 @@ module ReleaseManager
 
       private
 
-      attr_reader :name, :url, :ref
+      attr_reader :name, :url, :ref, :is_module
 
       def clone_component
         component_path = COMPONENTS_DIR.join(name)
@@ -37,11 +38,26 @@ module ReleaseManager
       end
 
       def generate_diff
+        is_module ? module_diff : component_diff
+      end
+
+      def component_diff
         git_helper.checkout(ref)
         {
           tag: git_helper.describe('HEAD', tags: true),
           commits: git_helper.commits_between(
             git_helper.describe('HEAD', tags: true, abbrev: 0),
+            'HEAD'
+          )
+        }
+      end
+
+      def module_diff
+        git_helper.checkout('master')
+        {
+          tag: ref,
+          commits: git_helper.commits_between(
+            ref,
             'HEAD'
           )
         }
