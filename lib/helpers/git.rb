@@ -5,6 +5,7 @@ module ReleaseManager
     module Git
       class << self
         def clone(url, name, opts)
+          logger.info("Cloning #{url} - #{name}")
           ::Git.clone(url, name, opts)
         end
 
@@ -26,6 +27,10 @@ module ReleaseManager
 
         def commits_between(ref1, ref2)
           @repo.log.between(ref1, ref2).map(&:message)
+        end
+
+        def logger
+          ReleaseManager.logger
         end
       end
     end
