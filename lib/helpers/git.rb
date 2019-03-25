@@ -26,7 +26,7 @@ module ReleaseManager
         end
 
         def commits_between(ref1, ref2)
-          @repo.log.between(ref1, ref2).map(&:message)
+          @repo.log.between(ref1, ref2)
         end
 
         def logger
