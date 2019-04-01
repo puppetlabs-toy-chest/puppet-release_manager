@@ -1,6 +1,7 @@
 AllCops:
   Exclude:
     - 'new_release/**/*'
+    - 'spec/**/*'
 Style/Documentation:
   Enabled: false
 Metrics/LineLength:

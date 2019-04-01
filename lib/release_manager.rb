@@ -3,6 +3,7 @@
 require_relative '../config/boot'
 require_relative 'helpers/file'
 require_relative 'helpers/git'
+require_relative 'entities/component'
 
 module ReleaseManager
   RELEASE_DIR    = ROOT_DIR.join('new_release')

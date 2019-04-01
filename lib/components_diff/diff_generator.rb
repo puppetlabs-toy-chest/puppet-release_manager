@@ -3,18 +3,19 @@
 module ReleaseManager
   module ComponentsDiff
     class DiffGenerator
-      def self.generate(args)
-        new(args).generate
+      extend Forwardable
+
+      def self.generate(component)
+        new(component).generate!
       end
 
-      def initialize(args)
-        @name      = args[:name]
-        @url       = args[:url]
-        @ref       = args[:ref]
-        @is_module = args[:is_module]
+      def_delegators :@component, :name, :url, :ref, :promoted?
+
+      def initialize(component)
+        @component = component
       end
 
-      def generate
+      def generate!
         if url.nil?
           return {
             tag: 'No URL provided.',
@@ -27,8 +28,6 @@ module ReleaseManager
 
       private
 
-      attr_reader :name, :url, :ref, :is_module
-
       def clone_component
         component_path = COMPONENTS_DIR.join(name)
         unless file_helper.dir_exists?(component_path)
@@ -38,10 +37,10 @@ module ReleaseManager
       end
 
       def generate_diff
-        is_module ? module_diff : component_diff
+        promoted? ? promoted_diff : not_promoted_diff
       end
 
-      def component_diff
+      def promoted_diff
         git_helper.checkout(ref)
         {
           tag: git_helper.describe('HEAD', tags: true),
@@ -52,7 +51,7 @@ module ReleaseManager
         }
       end
 
-      def module_diff
+      def not_promoted_diff
         git_helper.checkout('master')
         {
           tag: ref,

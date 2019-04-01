@@ -29,13 +29,8 @@ module ReleaseManager
       end
 
       def prep_components
-        resolver.each_component do |name, url, ref, is_module|
-          result[name] = DiffGenerator.generate(
-            name: name,
-            url: url,
-            ref: ref,
-            is_module: is_module
-          )
+        each_component do |component|
+          result[component.name] = DiffGenerator.generate(component)
         end
       end
 
@@ -44,6 +39,13 @@ module ReleaseManager
           git_helper.clone(AGENT_URL, 'puppet-agent', path: RELEASE_DIR)
         end
         git_helper.use_repo(AGENT_DIR)
+      end
+
+      def each_component
+        file_helper.read_dir(AGENT_DIR.join('configs', 'components', '*.json')).each do |file_name|
+          json = JSON.parse(file_helper.read(file_name))
+          yield(resolver.create_component(file_name: file_name, url: json['url'], ref: json['ref']))
+        end
       end
 
       def git_helper
@@ -55,7 +57,7 @@ module ReleaseManager
       end
 
       def resolver
-        ComponentsResolver
+        Common::ComponentsResolver
       end
     end
   end

@@ -12,10 +12,8 @@ module ReleaseManager
           FileUtils.mkdir_p(path) unless dir_exists?(path)
         end
 
-        def each_file(dir_path)
-          return unless block_given?
-
-          Dir.glob(dir_path).each { |file_path| yield(file_path) }
+        def read_dir(dir_path)
+          Dir.glob(dir_path)
         end
 
         def read(file)
