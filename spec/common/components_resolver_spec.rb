@@ -2,7 +2,7 @@
 
 describe ReleaseManager::Common::ComponentsResolver do
   context 'interface' do
-    subject { ReleaseManager::Common::ComponentsResolver.new({}) }
+    subject { build(:components_resolver) }
 
     it { is_expected.to respond_to(:create_component) }
   end
@@ -37,13 +37,13 @@ describe ReleaseManager::Common::ComponentsResolver do
     end
 
     context 'when the component is not promoted' do
-      it 'sets the flag to false for resource_api' do
+      it 'sets the promoted flag to false for resource_api' do
         component = build(:components_resolver, file_name: 'resource_api').create_component
         expect(component.promoted?).to be false
       end
 
-      it 'sets the flag to false for modules' do
-        component = build(:components_resolver, file_name: 'resource_api').create_component
+      it 'sets the promoted flag to false for modules' do
+        component = build(:components_resolver, file_name: 'module-puppetlabs').create_component
         expect(component.promoted?).to be false
       end
     end

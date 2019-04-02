@@ -17,6 +17,10 @@ module ReleaseManager
       end
 
       alias promoted? promoted
+
+      def path
+        COMPONENTS_DIR.join(name)
+      end
     end
   end
 end

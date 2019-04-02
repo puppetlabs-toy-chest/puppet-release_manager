@@ -9,7 +9,7 @@ module ReleaseManager
         new(component).generate!
       end
 
-      def_delegators :@component, :name, :url, :ref, :promoted?
+      def_delegators :@component, :name, :url, :ref, :promoted?, :path
 
       def initialize(component)
         @component = component
@@ -22,21 +22,13 @@ module ReleaseManager
             commits: []
           }
         end
-        clone_component
         generate_diff
       end
 
       private
 
-      def clone_component
-        component_path = COMPONENTS_DIR.join(name)
-        unless file_helper.dir_exists?(component_path)
-          git_helper.clone(url, name, path: COMPONENTS_DIR)
-        end
-        git_helper.use_repo(component_path)
-      end
-
       def generate_diff
+        git_helper.use_repo(path)
         promoted? ? promoted_diff : not_promoted_diff
       end
 

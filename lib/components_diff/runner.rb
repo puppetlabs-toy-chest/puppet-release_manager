@@ -24,28 +24,34 @@ module ReleaseManager
 
       def prep_agent
         file_helper.create_dir(RELEASE_DIR)
-        clone_agent
+        cloner.clone_agent
         git_helper.checkout(source_branch)
       end
 
       def prep_components
-        each_component do |component|
+        clone_components
+        components_list.each do |component|
           result[component.name] = DiffGenerator.generate(component)
         end
       end
 
-      def clone_agent
-        unless file_helper.dir_exists?(AGENT_DIR)
-          git_helper.clone(AGENT_URL, 'puppet-agent', path: RELEASE_DIR)
-        end
-        git_helper.use_repo(AGENT_DIR)
+      def clone_components
+        cloner.clone_async(components_to_clone)
       end
 
-      def each_component
-        file_helper.read_dir(AGENT_DIR.join('configs', 'components', '*.json')).each do |file_name|
+      def components_list
+        @components_list ||= component_files.map do |file_name|
           json = JSON.parse(file_helper.read(file_name))
-          yield(resolver.create_component(file_name: file_name, url: json['url'], ref: json['ref']))
+          resolver.create_component(file_name: file_name, url: json['url'], ref: json['ref'])
         end
+      end
+
+      def components_to_clone
+        components_list.reject { |component| component.url.nil? }
+      end
+
+      def component_files
+        file_helper.read_dir(AGENT_DIR.join('configs', 'components', '*.json'))
       end
 
       def git_helper
@@ -58,6 +64,10 @@ module ReleaseManager
 
       def resolver
         Common::ComponentsResolver
+      end
+
+      def cloner
+        Common::Cloner
       end
     end
   end
