@@ -2,6 +2,7 @@
 
 require 'factory_bot'
 require_relative '../lib/release_manager'
+require_relative '../lib/presenters/terminal'
 require_relative '../lib/components_diff/components_diff'
 
 RSpec.configure do |config|
