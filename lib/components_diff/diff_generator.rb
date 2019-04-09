@@ -9,8 +9,6 @@ module ReleaseManager
         new(component).generate!
       end
 
-      def_delegators :@component, :name, :url, :ref, :promoted?, :path
-
       def initialize(component)
         @component = component
       end
@@ -26,6 +24,8 @@ module ReleaseManager
       end
 
       private
+
+      def_delegators :@component, :name, :url, :ref, :promoted?, :path
 
       def generate_diff
         git_helper.use_repo(path)
