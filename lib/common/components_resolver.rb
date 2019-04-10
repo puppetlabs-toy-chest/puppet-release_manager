@@ -27,7 +27,7 @@ module ReleaseManager
       attr_reader :file_name, :url, :ref
 
       def promoted?
-        !/module-puppetlabs|resource_api/.match?(file_name)
+        !/module-puppetlabs/.match?(file_name)
       end
 
       def resolve_name
