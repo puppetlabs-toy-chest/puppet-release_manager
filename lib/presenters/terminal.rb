@@ -42,7 +42,7 @@ module ReleaseManager
       end
 
       def add_row(component, revision, changes_exist = false)
-        rows << if changes_exist
+        rows << unless changes_exist
                   [component, revision.green, nil]
                 else change_version(component, revision)
                 end
