@@ -19,7 +19,10 @@ module ReleaseManager
           revision = details[:tag].match(/[0-9]+\.[0-9]+\.[0-9]+/)
           add_row(component, revision.to_s, details[:commits].any?)
         end
-        puts ::Terminal::Table.new rows: rows
+        puts ::Terminal::Table.new(
+          headings: ['Component', 'Version', 'Suggested version'],
+          rows: rows
+        )
       end
 
       def change_version_z(revision)
@@ -43,16 +46,17 @@ module ReleaseManager
 
       def add_row(component, revision, changes_exist = false)
         rows << if changes_exist
-                  [component, revision.green, nil]
-                else change_version(component, revision)
+                  change_version(component, revision)
+                else
+                  [component, revision.green, { value: revision.green, alignment: :center }]
                 end
       end
 
       def change_version(component, revision)
         if !release_type || release_type == 'z'
-          [component, revision.red, change_version_z(revision).green]
+          [component, revision.red, { value: change_version_z(revision).green, alignment: :center }]
         else
-          [component, revision.red, change_version_y(revision).yellow]
+          [component, revision.red, { value: change_version_y(revision).green, alignment: :center }]
         end
       end
     end
