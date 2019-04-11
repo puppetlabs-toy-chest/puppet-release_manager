@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe ReleaseManager::ComponentsDiff::Runner do
-  subject { ReleaseManager::ComponentsDiff::Runner.new('master') }
+  subject { ReleaseManager::ComponentsDiff::Runner.new('master','z') }
 
   context 'interface' do
     it { is_expected.to respond_to(:run) }
@@ -39,6 +39,7 @@ describe ReleaseManager::ComponentsDiff::Runner do
         expect(subject).to receive(:components_list).twice.and_return(components)
         expect(ReleaseManager::Common::Cloner).to receive(:clone_async).with(components)
         expect(ReleaseManager::ComponentsDiff::DiffGenerator).to receive(:generate).with(components.first)
+        expect(subject).to receive(:fill_revision_field)
       end
     end
   end

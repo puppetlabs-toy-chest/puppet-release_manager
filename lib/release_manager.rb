@@ -5,6 +5,7 @@ require_relative 'helpers/file'
 require_relative 'helpers/git'
 require_relative 'helpers/jira'
 require_relative 'entities/component'
+require_relative 'common/version_handler'
 
 module ReleaseManager
   RELEASE_DIR    = ROOT_DIR.join('new_release')
@@ -12,6 +13,7 @@ module ReleaseManager
   COMPONENTS_DIR = RELEASE_DIR.join('pkg')
   AGENT_DIR      = RELEASE_DIR.join('puppet-agent')
   LOG_DIR        = ROOT_DIR.join('log')
+  VERSIONS_FILE  = ROOT_DIR.join('config', 'current_release_versions.yaml')
 
   def self.logger
     return @logger unless @logger.nil?

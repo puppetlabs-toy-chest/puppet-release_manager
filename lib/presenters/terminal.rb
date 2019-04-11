@@ -12,26 +12,16 @@ module ReleaseManager
       end
 
       def present
-        ComponentsDiff::Runner.run(branch).each do |component, details|
+        to_write = []
+        ComponentsDiff::Runner.run(branch, release_type).each do |component, details|
           print_details component, details
           next if /core|runtime|api/.match?(component)
 
-          revision = details[:tag].match(/[0-9]+\.[0-9]+\.[0-9]+/)
-          add_row(component, revision.to_s, details[:commits].any?)
+          add_row(component, details)
+          to_write << { components: component, version: details[:suggested] }
         end
-        puts ::Terminal::Table.new(
-          headings: ['Component', 'Version', 'Suggested version'],
-          rows: rows
-        )
-      end
-
-      def change_version_z(revision)
-        revision.gsub(/[0-9]+$/) { |s| (s.to_i + 1).to_s }
-      end
-
-      def change_version_y(revision)
-        revision = revision.gsub(/\.[0-9]+\./) { |s| ".#{(s.delete('.').to_i + 1)}." }
-        revision.gsub(/[0-9]+$/, '0')
+        Helpers::File.write(VERSIONS_FILE, to_write.to_yaml)
+        display_table
       end
 
       private
@@ -44,20 +34,19 @@ module ReleaseManager
         end
       end
 
-      def add_row(component, revision, changes_exist = false)
-        rows << if changes_exist
-                  change_version(component, revision)
+      def add_row(component, details)
+        rows << if details[:commits].any?
+                  [component, details[:current_version].red, details[:suggested].yellow]
                 else
-                  [component, revision.green, { value: revision.green, alignment: :center }]
+                  [component, details[:current_version].green, details[:suggested].green]
                 end
       end
 
-      def change_version(component, revision)
-        if !release_type || release_type == 'z'
-          [component, revision.red, { value: change_version_z(revision).green, alignment: :center }]
-        else
-          [component, revision.red, { value: change_version_y(revision).green, alignment: :center }]
-        end
+      def display_table
+        puts ::Terminal::Table.new(
+          headings: ['Component', 'Version', 'Suggested version'],
+          rows: rows
+        )
       end
     end
   end

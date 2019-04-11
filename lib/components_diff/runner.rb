@@ -3,13 +3,14 @@
 module ReleaseManager
   module ComponentsDiff
     class Runner
-      def self.run(source_branch)
-        new(source_branch).run
+      def self.run(source_branch, release_type)
+        new(source_branch, release_type).run
       end
 
-      def initialize(source_branch)
+      def initialize(source_branch, release_type)
         @source_branch = source_branch
-        @result        = {}
+        @release_type = release_type
+        @result = {}
       end
 
       def run
@@ -20,7 +21,7 @@ module ReleaseManager
 
       private
 
-      attr_reader :source_branch, :result
+      attr_reader :source_branch, :result, :release_type
 
       def prep_agent
         file_helper.create_dir(RELEASE_DIR)
@@ -32,7 +33,14 @@ module ReleaseManager
         clone_components
         components_list.each do |component|
           result[component.name] = DiffGenerator.generate(component)
+          result[component.name] = fill_revision_field(component.name)
         end
+      end
+
+      def fill_revision_field(name)
+        result[name] = Common::VersionHandler.new(component: result[name],
+                                                  release_type: release_type,
+                                                  name: name).add_versions
       end
 
       def clone_components
