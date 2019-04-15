@@ -23,6 +23,10 @@ module ReleaseManager
         def dir_exists?(path)
           Dir.exist?(path)
         end
+
+        def write(file, hash)
+          ::File.write(file, hash)
+        end
       end
     end
   end
