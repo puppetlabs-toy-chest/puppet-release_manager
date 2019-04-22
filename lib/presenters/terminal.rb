@@ -14,7 +14,7 @@ module ReleaseManager
       def present
         to_write = []
         ComponentsDiff::Runner.run(branch, release_type).each do |component, details|
-          print_details component, details
+          print_details(component, details)
           next if /core|runtime|api/.match?(component)
 
           add_row(component, details)

@@ -45,6 +45,7 @@ module ReleaseManager
 
       def clone_components
         cloner.clone_async(components_to_clone)
+        cloner.clone_puppet_runtime unless file_helper.dir_exists?(RUNTIME_DIR)
       end
 
       def components_list
