@@ -26,6 +26,10 @@ module ReleaseManager
           threads.map(&:join)
         end
 
+        def clone_puppet_runtime
+          git_helper.clone(RUNTIME_URL, 'puppet-runtime', path: RUNTIME_DIR)
+        end
+
         private
 
         def git_helper

@@ -38,7 +38,7 @@ module ReleaseManager
       end
 
       def calculate_next
-        component[:current_version] unless component[:commits].any?
+        return component[:current_version] unless component[:commits].any?
 
         change_version
       end

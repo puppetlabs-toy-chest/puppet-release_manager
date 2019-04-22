@@ -14,6 +14,8 @@ module ReleaseManager
       end
 
       def generate!
+        return commits_for_runtime if name.match?(/runtime/)
+
         if url.nil?
           return {
             tag: 'No URL provided.',
@@ -30,6 +32,14 @@ module ReleaseManager
       def generate_diff
         git_helper.use_repo(path)
         promoted? ? promoted_diff : not_promoted_diff
+      end
+
+      def commits_for_runtime
+        extracter = RuntimeVersionExtracter.new
+        {
+          tag: extracter.extract_version,
+          commits: extracter.extract(path)
+        }
       end
 
       def promoted_diff
