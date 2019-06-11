@@ -3,55 +3,44 @@
 module ReleaseManager
   module Common
     class VersionHandler
-      attr_reader :component, :release_type, :name
+      ACTIONS = {
+        'x' => :change_version_x,
+        'y' => :change_version_y,
+        'z' => :change_version_z
+      }.freeze
 
       def initialize(args)
-        @component    = args[:component]
+        @versions     = convert_version(args[:current_version])
         @release_type = args[:release_type]
-        @name         = args[:name]
       end
 
-      def change_version
-        if !release_type || release_type == 'z'
-          change_version_z
-        else
-          change_version_y
-        end
-      end
-
-      def add_versions
-        return component if should_add_versions?
-
-        component[:current_version] = extract_revision
-        component[:suggested] = calculate_next
-        component
-      end
-
-      def should_add_versions?
-        name.match?(/core|runtime|api/)
+      def increment_version
+        send(ACTIONS[release_type]) if respond_to?(ACTIONS[release_type], true)
+        versions.join('.')
       end
 
       private
 
-      def extract_revision
-        component[:tag].match(/[0-9]+\.[0-9]+\.[0-9]+/).to_s
+      attr_reader :versions, :release_type
+
+      # Convert version to array of integers
+      def convert_version(version_string)
+        version_string.scan(/[0-9]+/).map(&:to_i)
       end
 
-      def calculate_next
-        return component[:current_version] unless component[:commits].any?
-
-        change_version
-      end
-
-      def change_version_z
-        component[:current_version].gsub(/[0-9]+$/) { |s| (s.to_i + 1).to_s }
+      def change_version_x
+        versions[0] += 1
+        versions[1] = 0
+        versions[2] = 0
       end
 
       def change_version_y
-        component[:suggested] = component[:current_version].gsub(/\.[0-9]+\./) do |s|
-          ".#{(s.delete('.').to_i + 1)}."
-        end
-        component[:suggested].gsub(/[0-9]+$/, '0')
+        versions[1] += 1
+        versions[2] = 0
+      end
+
+      def change_version_z
+        versions[2] += 1
       end
     end
   end

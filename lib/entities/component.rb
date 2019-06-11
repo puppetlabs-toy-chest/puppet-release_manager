@@ -3,7 +3,7 @@
 module ReleaseManager
   module Entities
     class Component
-      attr_reader :name, :url, :ref, :promoted
+      attr_reader :name, :url, :ref, :promoted, :path
 
       def self.create(args = {})
         new(args)
@@ -14,13 +14,10 @@ module ReleaseManager
         @url       = args[:url]
         @ref       = args[:ref]
         @promoted  = args[:promoted]
+        @path      = args[:path]
       end
 
       alias promoted? promoted
-
-      def path
-        COMPONENTS_DIR.join(name)
-      end
     end
   end
 end

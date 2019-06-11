@@ -1,8 +1,9 @@
 AllCops:
   Exclude:
     - 'new_release/**/*'
+    - 'lib/presenters/**/*'
     - 'spec/**/*'
 Style/Documentation:
   Enabled: false
 Metrics/LineLength:
-  Max: 100
+  Max: 110

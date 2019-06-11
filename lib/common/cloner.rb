@@ -5,17 +5,14 @@ module ReleaseManager
     module Cloner
       class << self
         def clone_component(component)
-          unless file_helper.dir_exists?(component.path)
-            git_helper.clone(component.url, component.name, path: COMPONENTS_DIR)
-          end
-          git_helper.use_repo(component.path)
+          logger.info("Cloning #{component.name}: #{component.url} into #{component.path}")
+          git_helper.clone(component.url, component.path) unless file_helper.dir_exists?(component.path)
+          fetch_all(component.path)
         end
 
         def clone_agent
-          unless file_helper.dir_exists?(AGENT_DIR)
-            git_helper.clone(AGENT_URL, 'puppet-agent', path: RELEASE_DIR)
-          end
-          git_helper.use_repo(AGENT_DIR)
+          git_helper.clone(AGENT_URL, AGENT_DIR) unless file_helper.dir_exists?(AGENT_DIR)
+          fetch_all(AGENT_DIR)
         end
 
         def clone_async(components)
@@ -26,11 +23,11 @@ module ReleaseManager
           threads.map(&:join)
         end
 
-        def clone_puppet_runtime
-          git_helper.clone(RUNTIME_URL, 'puppet-runtime', path: RUNTIME_DIR)
-        end
-
         private
+
+        def fetch_all(path)
+          git_helper.use_repo(path) { git_helper.fetch_all }
+        end
 
         def git_helper
           Helpers::Git
@@ -38,6 +35,10 @@ module ReleaseManager
 
         def file_helper
           Helpers::File
+        end
+
+        def logger
+          ReleaseManager.logger
         end
       end
     end

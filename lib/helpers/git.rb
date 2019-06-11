@@ -4,33 +4,37 @@ module ReleaseManager
   module Helpers
     module Git
       class << self
-        def clone(url, name, opts)
-          logger.info("Cloning #{url} - #{name}")
-          ::Git.clone(url, name, opts)
+        def clone(url, path)
+          `git clone --quiet #{url} #{path}`
         end
 
         def fetch_all
-          @repo.fetch(all: true)
+          `git fetch --all`
         end
 
         def checkout(branch)
-          @repo.checkout(branch)
+          `git checkout --quiet #{branch}`
         end
 
-        def use_repo(repo)
-          @repo = ::Git.open(repo)
+        def use_repo(repo_path)
+          prev_dir = Dir.pwd
+          Dir.chdir(repo_path)
+          yield if block_given?
+          Dir.chdir(prev_dir)
         end
 
-        def describe(ref, opts)
-          @repo.describe(ref, opts)
+        def describe_tags(abbrev = true)
+          return `git describe --tags --abbrev=0`.strip if abbrev
+
+          `git describe --tags`.strip
         end
 
         def commits_between(ref1, ref2)
-          @repo.log.between(ref1, ref2)
+          `git log #{ref1}..#{ref2} --oneline`.split("\n")
         end
 
-        def logger
-          ReleaseManager.logger
+        def branch(remote = false)
+          remote ? `git branch -r` : `git branch`
         end
       end
     end

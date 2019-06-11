@@ -3,48 +3,50 @@
 module ReleaseManager
   module Presenters
     class Terminal
-      attr_reader :rows, :release_type, :branch
-
-      def initialize(args = {})
-        @branch = args[:branch]
-        @release_type = args[:release_type]
+      def initialize(response)
+        @response = response
         @rows = []
       end
 
       def present
-        to_write = []
-        ComponentsDiff::Runner.run(branch, release_type).each do |component, details|
-          print_details(component, details)
-          next if /core|runtime|api/.match?(component)
+        response.components.each do |component|
+          print_details(component)
+          next if /core|runtime|nssm/.match?(component.name)
 
-          add_row(component, details)
-          to_write << { components: component, version: details[:suggested] }
+          add_row(component)
         end
-        Helpers::File.write(VERSIONS_FILE, to_write.to_yaml)
         display_table
       end
 
       private
 
-      def print_details(component, details)
+      attr_reader :response, :rows
+
+      def print_details(component)
         puts "\n"
-        puts "#{component} - #{details[:tag]}"
-        details[:commits].each do |commit|
-          puts "  #{commit.sha} - #{commit.message.delete("\n")}"
+        puts "#{component.name} - #{component.tag}"
+        component.commits.take(10).each { |commit| puts "  #{commit}" }
+      end
+
+      def add_row(component)
+        rows << generate_row(component)
+      end
+
+      def generate_row(component)
+        if version_change?(component)
+          [component.name, component.tag.red, component.suggested_version.yellow, component.branch.yellow]
+        else
+          [component.name, component.tag.green, component.suggested_version.green, component.branch.yellow]
         end
       end
 
-      def add_row(component, details)
-        rows << if details[:commits].any?
-                  [component, details[:current_version].red, details[:suggested].yellow]
-                else
-                  [component, details[:current_version].green, details[:suggested].green]
-                end
+      def version_change?(component)
+        component.tag != component.suggested_version
       end
 
       def display_table
         puts ::Terminal::Table.new(
-          headings: ['Component', 'Version', 'Suggested version'],
+          headings: ['Component', 'Version', 'Suggested version', 'Maintenance Branch'],
           rows: rows
         )
       end

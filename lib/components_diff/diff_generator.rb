@@ -11,57 +11,51 @@ module ReleaseManager
 
       def initialize(component)
         @component = component
+        @result    = OpenStruct.new
       end
 
       def generate!
-        return commits_for_runtime if name.match?(/runtime/)
-
-        if url.nil?
-          return {
-            tag: 'No URL provided.',
-            commits: []
-          }
-        end
-        generate_diff
+        git_helper.use_repo(path) { build_result }
+        result
       end
 
       private
 
+      attr_reader :result
+
       def_delegators :@component, :name, :url, :ref, :promoted?, :path
 
-      def generate_diff
-        git_helper.use_repo(path)
+      def build_result
+        git_helper.checkout(ref)
+        result.commits = name.match?(/runtime/) ? runtime_diff : component_diff
+      end
+
+      def component_diff
         promoted? ? promoted_diff : not_promoted_diff
       end
 
-      def commits_for_runtime
-        extracter = RuntimeVersionExtracter.new
-        {
-          tag: extracter.extract_version,
-          commits: extracter.extract(path)
-        }
+      def runtime_diff
+        result.tag = git_helper.describe_tags
+        commits(runtime_handler.previous_version, ref)
       end
 
       def promoted_diff
-        git_helper.checkout(ref)
-        {
-          tag: git_helper.describe('HEAD', tags: true),
-          commits: git_helper.commits_between(
-            git_helper.describe('HEAD', tags: true, abbrev: 0),
-            'HEAD'
-          )
-        }
+        result.tag = git_helper.describe_tags
+        commits(git_helper.describe_tags)
       end
 
       def not_promoted_diff
+        result.tag = git_helper.describe_tags
         git_helper.checkout('master')
-        {
-          tag: ref,
-          commits: git_helper.commits_between(
-            ref,
-            'HEAD'
-          )
-        }
+        commits(ref)
+      end
+
+      def commits(from_ref, to_ref = 'HEAD')
+        git_helper.commits_between(from_ref, to_ref)
+      end
+
+      def runtime_handler
+        RuntimeVersionExtractor
       end
 
       def git_helper
