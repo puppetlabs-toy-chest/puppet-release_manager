@@ -10,20 +10,9 @@ module ReleaseManager
           @branch = request.source_branch.tr('.', '')
           @found = false
           git_helper.use_repo(CI_CONFIGS_DIR) do
-            modify_file(file_path, modify_promotion)
+            FileEditor.new(file_path: file_path).edit(&modify_promotion)
             commit_and_push_changes(request)
           end
-        end
-
-        def modify_file(file_path, method)
-          temp_file = file_helper.create_temporary_file
-          file_helper.open(file_path, 'r').each_line do |line|
-            line = method.call(line)
-
-            temp_file.puts line
-          end
-          temp_file.close
-          file_helper.move_file(temp_file.path, file_path)
         end
 
         private

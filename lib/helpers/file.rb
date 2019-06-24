@@ -28,8 +28,8 @@ module ReleaseManager
           ::File.write(file, hash)
         end
 
-        def create_temporary_file
-          Tempfile.new('foo')
+        def create_temporary_file(name = 'tmpfile')
+          Tempfile.new(name)
         end
 
         def open(file_path, mode)
