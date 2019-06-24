@@ -14,6 +14,10 @@ module ReleaseManager
           )
         end
 
+        def create_ci_jobs_config
+          create_component(file_name: CI_CONFIGS_DIR, url: CI_CONFIGS_URL, ref: '')
+        end
+
         private
 
         def promoted?(ref)

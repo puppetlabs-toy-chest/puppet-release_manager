@@ -27,6 +27,18 @@ module ReleaseManager
         def write(file, hash)
           ::File.write(file, hash)
         end
+
+        def create_temporary_file
+          Tempfile.new('foo')
+        end
+
+        def open(file_path, mode)
+          ::File.open(file_path, mode)
+        end
+
+        def move_file(source_path, dest_path)
+          FileUtils.mv(source_path, dest_path)
+        end
       end
     end
   end
