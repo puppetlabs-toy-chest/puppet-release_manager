@@ -25,7 +25,7 @@ module ReleaseManager
         end
 
         def path(name)
-          COMPONENTS_DIR.join(name).to_s
+          COMPONENTS_DIR.join(name)
         end
       end
     end

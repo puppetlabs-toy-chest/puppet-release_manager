@@ -7,12 +7,14 @@ module ReleaseManager
         @request   = request
         @component = component
         @response  = OpenStruct.new
+        post_initialize
       end
 
       def build
         generate_diff
         add_suggested_version
         add_maintenance_branch
+        add_version_from_file
         response
       end
 
@@ -22,7 +24,6 @@ module ReleaseManager
 
       def generate_diff
         diff = DiffGenerator.generate(component)
-        response.name = component.name
         response.tag = diff.tag
         response.commits = diff.commits
       end
@@ -30,7 +31,7 @@ module ReleaseManager
       def add_suggested_version
         return response.suggested_version = response.tag unless version_bump?
 
-        response.suggested_version = Common::VersionHandler.new(
+        response.suggested_version = VersionHandler::VersionBumper.new(
           release_type: request.release_type,
           current_version: response.tag
         ).increment_version
@@ -45,6 +46,10 @@ module ReleaseManager
         ).read
       end
 
+      def add_version_from_file
+        response.reported_version = VersionHandler::VersionReader.new(component).read_version
+      end
+
       # If there were changes since the last release, component is promoted and tag is valid
       def version_bump?
         response.commits.any? && valid_tag? && component.promoted?
@@ -52,6 +57,11 @@ module ReleaseManager
 
       def valid_tag?
         /[0-9]+\.[0-9]+\.[0-9]+/.match?(response.tag)
+      end
+
+      def post_initialize
+        response.name = component.name
+        response.path = component.path
       end
     end
   end

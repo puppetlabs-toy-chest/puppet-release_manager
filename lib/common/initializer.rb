@@ -9,8 +9,8 @@ module ReleaseManager
           clone_agent
           git_helper.checkout(request.source_branch)
           clone_components
-          store_components
           logger.info('Done.')
+          reader.components
         end
 
         private
@@ -29,10 +29,6 @@ module ReleaseManager
         def clone_components
           logger.info('Cloning components...')
           cloner.clone_async(reader.components)
-        end
-
-        def store_components
-          Repository::ComponentYamlStore.save(reader.components)
         end
 
         def reader

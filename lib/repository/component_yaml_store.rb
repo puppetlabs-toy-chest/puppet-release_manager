@@ -18,7 +18,7 @@ module ReleaseManager
         def read
           $/ = "\n\n"
           file = File.open(STORE_FILE, 'r')
-          result = file.map { |obj| YAML.safe_load(obj, [ReleaseManager::Entities::Component]) }
+          result = file.map { |obj| YAML.safe_load(obj, [ReleaseManager::Entities::Component, Pathname]) }
           file.close
           result
         end

@@ -36,5 +36,6 @@ load_files(
   'lib/actions/*.rb',
   'lib/components_diff/*.rb',
   'lib/repository/*.rb',
-  'lib/presenters/*.rb'
+  'lib/presenters/*.rb',
+  'lib/version_handler/*.rb'
 )

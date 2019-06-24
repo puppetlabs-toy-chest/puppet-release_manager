@@ -9,7 +9,7 @@ module ReleaseManager
 
       def run
         logger.info('Initializing workspace...')
-        Common::Initializer.workspace_initialize(request)
+        store Common::Initializer.workspace_initialize(request)
       end
 
       private
@@ -18,6 +18,10 @@ module ReleaseManager
 
       def logger
         ReleaseManager.logger
+      end
+
+      def store(components)
+        Repository::ComponentYamlStore.save(components)
       end
     end
   end

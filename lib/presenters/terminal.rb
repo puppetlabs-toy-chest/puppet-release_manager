@@ -34,9 +34,9 @@ module ReleaseManager
 
       def generate_row(component)
         if version_change?(component)
-          [component.name, component.tag.red, component.suggested_version.yellow, component.branch.yellow]
+          [component.name, component.tag.red, component.suggested_version.yellow, component.reported_version, component.branch.yellow]
         else
-          [component.name, component.tag.green, component.suggested_version.green, component.branch.yellow]
+          [component.name, component.tag.green, component.suggested_version.green, component.reported_version, component.branch.yellow]
         end
       end
 
@@ -46,7 +46,7 @@ module ReleaseManager
 
       def display_table
         puts ::Terminal::Table.new(
-          headings: ['Component', 'Version', 'Suggested version', 'Maintenance Branch'],
+          headings: ['Component', 'Latest Tag', 'Suggested version', 'Reported Version', 'Maintenance Branch'],
           rows: rows
         )
       end
