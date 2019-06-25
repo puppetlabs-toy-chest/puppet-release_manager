@@ -36,6 +36,14 @@ module ReleaseManager
         def branch(remote = false)
           remote ? `git branch -r` : `git branch`
         end
+
+        def commit(message)
+          `git commit -a -m "#{message}"`
+        end
+
+        def push
+          `git push`
+        end
       end
     end
   end
