@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :version_handler, class: ReleaseManager::Common::VersionHandler do
+  factory :version_handler, class: ReleaseManager::VersionHandler do
     component     { {tag: 'No URL provided.', commits: [], current_version: '1.9.9'} }
     release_type  { 'z' }
     name          { 'pxp-agent' }
