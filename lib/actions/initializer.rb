@@ -9,6 +9,7 @@ module ReleaseManager
 
       def run
         logger.info('Initializing workspace...')
+        logger.info("Using #{request.source_branch} as target branch...")
         store Common::Initializer.workspace_initialize(request)
       end
 

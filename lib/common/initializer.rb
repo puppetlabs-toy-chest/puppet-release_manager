@@ -7,8 +7,10 @@ module ReleaseManager
         def workspace_initialize(request)
           create_dirs
           clone_agent
-          git_helper.checkout(request.source_branch)
-          clone_components
+          git_helper.use_repo(AGENT_DIR) do
+            git_helper.checkout(request.source_branch)
+            clone_components
+          end
           logger.info('Done.')
           reader.components
         end
