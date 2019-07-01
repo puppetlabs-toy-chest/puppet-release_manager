@@ -27,7 +27,7 @@ module ReleaseManager
         def write(file, hash)
           ::File.write(file, hash)
         end
-        
+
         def each_line(file_path, &block)
           ::File.foreach(file_path, "\n", &block)
         end

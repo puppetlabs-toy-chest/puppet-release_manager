@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ReleaseManager
   module Common
     class FileEditor
@@ -7,7 +9,7 @@ module ReleaseManager
 
       def edit
         file_helper.open(file_path, 'r').each_line { |line| temp_file.puts(yield(line)) }
-        replace
+        replace_file
       end
 
       private
@@ -22,7 +24,7 @@ module ReleaseManager
         @temp_file ||= file_helper.create_temporary_file
       end
 
-      def replace
+      def replace_file
         temp_file.close
         file_helper.move_file(temp_file.path, file_path)
       end

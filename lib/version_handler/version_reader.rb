@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ReleaseManager
   module VersionHandler
     class VersionReader
@@ -13,6 +15,7 @@ module ReleaseManager
 
         file_helper.each_line(version_file_path) do |line|
           next unless regexp.match?(line)
+
           # binding.pry if name == 'facter'
           @version = line.scan(/\d+\.\d+\.\d+/).first
           break

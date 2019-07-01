@@ -4,9 +4,9 @@ module ReleaseManager
   module VersionHandler
     class VersionBumper
       ACTIONS = {
-          'x' => :change_version_x,
-          'y' => :change_version_y,
-          'z' => :change_version_z
+        'x' => :change_version_x,
+        'y' => :change_version_y,
+        'z' => :change_version_z
       }.freeze
 
       def initialize(args)

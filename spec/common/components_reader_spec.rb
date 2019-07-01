@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe ReleaseManager::Common::ComponentsResolver do
+describe ReleaseManager::Common::ComponentsReader do
   context 'interface' do
     subject { build(:components_resolver) }
 
