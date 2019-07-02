@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 require 'factory_bot'
-require_relative '../config/boot'
+require 'fileutils'
+require_relative '../lib/release_manager'
 
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods

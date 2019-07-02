@@ -3,65 +3,41 @@
 module ReleaseManager
   module Common
     class PromotionChanger
-      class << self
-        def change_promotion(request)
-          clone_ci_configs
-          file_path = CI_CONFIGS_DIR.join('jenkii', 'platform', 'projects', 'puppet-agent.yaml')
-          @branch = request.source_branch.tr('.', '')
-          @found = false
-          git_helper.use_repo(CI_CONFIGS_DIR) do
-            FileEditor.new(file_path: file_path).edit(&modify_promotion)
-            commit_and_push_changes(request)
+      FILE_PATH = CI_CONFIGS_DIR.join('jenkii', 'platform', 'projects', 'puppet-agent.yaml')
+
+      def initialize(source_branch)
+        @source_branch = source_branch
+        @found   = false
+        @branch  = source_branch.tr('.', '')
+      end
+
+      def change_promotion
+        FileEditor.new(file_path: FILE_PATH).edit(&modify_promotion)
+      end
+
+      private
+
+      attr_reader :source_branch
+
+      def modify_promotion
+        lambda do |line|
+          if @found
+            line = change_line(line)
+            @found = false
           end
+          @found = true if /&#{@branch}_agent_pe_promotion/.match?(line)
+          line
         end
+      end
 
-        private
+      def change_line(line)
+        return line.gsub('TRUE', 'FALSE') if /TRUE/.match?(line)
 
-        def clone_ci_configs
-          cloner.clone_component(factory.create_ci_jobs_config)
-        end
+        line.gsub('FALSE', 'TRUE') if /FALSE/.match?(line)
+      end
 
-        def commit_and_push_changes(request)
-          git_helper.commit("(maint) Disable PE promotion for #{request.source_branch}")
-          git_helper.push
-        end
-
-        def modify_promotion
-          lambda do |line|
-            if @found == true
-              line = change_line(line)
-              @found = false
-            end
-            @found = true if /&#{@branch}_agent_pe_promotion/.match?(line)
-            line
-          end
-        end
-
-        def change_line(line)
-          return line.gsub('TRUE', 'FALSE') if /TRUE/.match?(line)
-
-          line.gsub('FALSE', 'TRUE') if /FALSE/.match?(line)
-        end
-
-        def cloner
-          Common::Cloner
-        end
-
-        def git_helper
-          Helpers::Git
-        end
-
-        def file_helper
-          Helpers::File
-        end
-
-        def factory
-          Factories::ComponentFactory
-        end
-
-        def logger
-          ReleaseManager.logger
-        end
+      def file_helper
+        Helpers::File
       end
     end
   end

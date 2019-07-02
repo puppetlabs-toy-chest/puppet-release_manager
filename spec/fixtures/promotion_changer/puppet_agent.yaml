@@ -1,0 +1,8 @@
+master_agent_pe_promotion: &master_agent_pe_promotion
+  p_pe_promotion: 'TRUE'
+64x_agent_pe_promotion: &64x_agent_pe_promotion
+  p_pe_promotion: 'TRUE'
+60x_agent_pe_promotion: &60x_agent_pe_promotion
+  p_pe_promotion: 'TRUE'
+55x_agent_pe_promotion: &55x_agent_pe_promotion
+  p_pe_promotion: 'TRUE'

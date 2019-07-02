@@ -17,10 +17,10 @@ module ReleaseManager
         end
 
         def use_repo(repo_path)
-          prev_dir = Dir.pwd
-          Dir.chdir(repo_path)
+          prev_dir = file_helper.current_dir
+          file_helper.chdir(repo_path)
           yield if block_given?
-          Dir.chdir(prev_dir)
+          file_helper.chdir(prev_dir)
         end
 
         def describe_tags(abbrev = true)
@@ -43,6 +43,16 @@ module ReleaseManager
 
         def push
           `git push`
+        end
+
+        def reset_hard(ref)
+          `git reset --hard #{ref}`
+        end
+
+        private
+
+        def file_helper
+          Helpers::File
         end
       end
     end

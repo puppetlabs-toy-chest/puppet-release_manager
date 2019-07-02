@@ -43,6 +43,18 @@ module ReleaseManager
         def move_file(source_path, dest_path)
           FileUtils.mv(source_path, dest_path)
         end
+
+        def delete(file_path)
+          ::File.delete(file_path)
+        end
+
+        def chdir(new_dir)
+          Dir.chdir(new_dir)
+        end
+
+        def current_dir
+          Dir.pwd
+        end
       end
     end
   end

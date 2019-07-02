@@ -25,9 +25,7 @@ VERSIONS_FILE  = ROOT_DIR.join('config', 'current_release_versions.yaml')
 TMP_DIR        = RELEASE_DIR.join('tmp')
 
 def load_files(*dirs)
-  dirs.each do |dir|
-    Dir[ROOT_DIR.join(dir)].each { |f| require f }
-  end
+  dirs.each { |dir| Dir[ROOT_DIR.join(dir)].each { |f| require f } }
 end
 
 load_files(

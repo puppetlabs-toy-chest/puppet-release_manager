@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 describe ReleaseManager::Common::FileEditor do
-  let(:path) { ROOT_DIR.join('spec', 'fixtures', 'file_editor_test') }
   subject { ReleaseManager::Common::FileEditor.new({file_path: path}) }
+  let(:path) { ROOT_DIR.join('spec', 'fixtures', 'file_editor_test') }
 
   context 'interface' do
     it { is_expected.to respond_to(:edit) }
@@ -14,7 +14,7 @@ describe ReleaseManager::Common::FileEditor do
     before { ReleaseManager::Helpers::File.write(path,'ALWAYS TRUE') }
 
     # cleanup
-    after { ReleaseManager::Helpers::File.open(path, 'w') }
+    after { ReleaseManager::Helpers::File.delete(path) }
 
     it 'changes the content of a file' do
       subject.edit(&regex)

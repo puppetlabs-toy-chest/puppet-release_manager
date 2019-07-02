@@ -33,8 +33,12 @@ module ReleaseManager
           cloner.clone_async(reader.components)
         end
 
+        def component_files
+          file_helper.read_dir(AGENT_DIR.join('configs', 'components', '*.json'))
+        end
+
         def reader
-          Common::ComponentsReader
+          @reader ||= Common::ComponentsReader.new(component_files)
         end
 
         def cloner
