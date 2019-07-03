@@ -3,6 +3,7 @@ AllCops:
     - 'new_release/**/*'
     - 'lib/presenters/**/*'
     - 'spec/**/*'
+    - 'vendor/bundle/**/*'
 Style/Documentation:
   Enabled: false
 Metrics/LineLength:
