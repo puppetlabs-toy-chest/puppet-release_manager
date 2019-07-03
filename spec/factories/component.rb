@@ -6,13 +6,15 @@ FactoryBot.define do
     url       { 'test/url/test.git' }
     ref       { 'test_ref' }
     promoted  { true }
+    path      { '' }
 
     initialize_with do
       new(
           name:     name,
           url:      url,
           ref:      ref,
-          promoted: promoted
+          promoted: promoted,
+          path:     path
       )
     end
   end

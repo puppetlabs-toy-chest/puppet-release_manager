@@ -9,9 +9,7 @@ describe ReleaseManager::ComponentsDiff::DiffGenerator do
     let(:component) { build(:component) }
     let(:diff_generator) { ReleaseManager::ComponentsDiff::DiffGenerator.new(component) }
 
-    before(:each) do
-      allow(ReleaseManager::Helpers::Git).to receive(:use_repo)
-    end
+    before { allow(ReleaseManager::Helpers::File).to receive(:chdir) }
 
     it 'generates the correct diff for promoted components' do
       expect(diff_generator).to receive(:promoted_diff)

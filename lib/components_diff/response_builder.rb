@@ -60,8 +60,9 @@ module ReleaseManager
       end
 
       def post_initialize
-        response.name = component.name
-        response.path = component.path
+        response.name     = component.name
+        response.path     = component.path
+        response.promoted = component.promoted?
       end
     end
   end

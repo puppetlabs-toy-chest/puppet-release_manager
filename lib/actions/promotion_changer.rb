@@ -36,7 +36,7 @@ module ReleaseManager
       end
 
       def promotion_changer
-        Common::PromotionChanger.new(request)
+        Common::PromotionChanger.new(request.source_branch)
       end
 
       def factory

@@ -11,7 +11,7 @@ module ReleaseManager
       def present
         response.components.each do |component|
           print_details(component)
-          next if /core|runtime|nssm/.match?(component.name)
+          next if ignore?(component)
 
           add_row(component)
         end
@@ -22,9 +22,16 @@ module ReleaseManager
 
       attr_reader :response, :rows
 
+      def ignore?(component)
+        return true if /core|runtime|nssm|CFPropertyList|puppetlabs-scheduled_task/.match?(component.name)
+        return true if /refs\/tags/.match?(component.ref)
+        false
+      end
+
       def print_details(component)
         puts "\n"
-        puts "#{component.name} - #{component.tag}"
+        component.promoted ? extra = '' : extra = '(not promoted)'
+        puts "#{component.name} - #{component.tag} #{extra}"
         component.commits.take(10).each { |commit| puts "  #{commit}" }
       end
 
