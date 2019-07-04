@@ -11,6 +11,7 @@ module ReleaseManager
 
       def run
         generate_response
+        store
         response
       end
 
@@ -26,6 +27,23 @@ module ReleaseManager
         components_list.map do |component|
           response.components << ComponentsDiff::ResponseBuilder.new(request, component).build
         end
+      end
+
+      def store
+        Repository::BumperYamlStore.save(components_to_bump)
+      end
+
+      def components_to_bump
+        response.components.each_with_object([]) { |c, list| list << create_bumper(c) unless c.branch.empty? }
+      end
+
+      def create_bumper(component)
+        Entities::Bumper.create(
+          name: component.name,
+          path: component.path,
+          version: component.suggested_version,
+          branch: component.branch
+        )
       end
     end
   end

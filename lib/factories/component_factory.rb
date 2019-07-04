@@ -4,7 +4,7 @@ module ReleaseManager
   module Factories
     class ComponentFactory
       class << self
-        def create_component(args)
+        def create(args)
           Entities::Component.create(
             name: resolve_name(args[:url]),
             url: args[:url],
@@ -15,7 +15,7 @@ module ReleaseManager
         end
 
         def create_ci_job_configs
-          create_component(url: CI_CONFIGS_URL, ref: 'master')
+          create(url: CI_CONFIGS_URL, ref: 'master')
         end
 
         private
