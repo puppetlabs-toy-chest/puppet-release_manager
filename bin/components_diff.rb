@@ -11,3 +11,4 @@ request = ReleaseManager::ComponentsDiff::Request.new(
 response = ReleaseManager::Actions::Diff.new(request).run
 
 ReleaseManager::Presenters::Terminal.new(response).present
+ReleaseManager::Presenters::TerminalTable.new(response).present
