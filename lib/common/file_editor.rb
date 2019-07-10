@@ -8,7 +8,7 @@ module ReleaseManager
       end
 
       def edit
-        file_helper.open(file_path, 'r').each_line { |line| temp_file.puts(yield(line)) }
+        file_helper.each_line(file_path) { |line| temp_file.puts(yield(line)) }
         replace_file
       end
 

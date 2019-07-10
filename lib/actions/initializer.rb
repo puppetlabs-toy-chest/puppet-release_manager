@@ -22,7 +22,7 @@ module ReleaseManager
       end
 
       def store(components)
-        Repository::ComponentYamlStore.save(components)
+        Repository::YamlStore.save(components)
       end
     end
   end

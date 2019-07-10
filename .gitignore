@@ -1,3 +1,7 @@
+.bundle
+tmp
+vendor
 .idea
 new_release/*
 log/*
+tmp
