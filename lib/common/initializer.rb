@@ -7,10 +7,7 @@ module ReleaseManager
         def workspace_initialize(request)
           create_dirs
           clone_agent
-          git_helper.use_repo(AGENT_DIR) do
-            git_helper.checkout(request.source_branch)
-            clone_components
-          end
+          clone_components(request.source_branch)
           logger.info('Done.')
           reader.components
         end
@@ -28,9 +25,12 @@ module ReleaseManager
           logger.info("Cloned into #{AGENT_DIR}...")
         end
 
-        def clone_components
+        def clone_components(source_branch)
           logger.info('Cloning components...')
-          cloner.clone_async(reader.components)
+          git_helper.use_repo(AGENT_DIR) do
+            git_helper.checkout(source_branch)
+            cloner.clone_async(reader.components)
+          end
         end
 
         def component_files

@@ -20,7 +20,7 @@ module ReleaseManager
       attr_reader :request, :response
 
       def components_list
-        @components_list ||= Repository::ComponentYamlStore.read
+        @components_list ||= Repository::YamlStore.read
       end
 
       def generate_response
@@ -30,7 +30,7 @@ module ReleaseManager
       end
 
       def store
-        Repository::BumperYamlStore.save(components_to_bump)
+        Repository::YamlStore.save(components_to_bump)
       end
 
       def components_to_bump

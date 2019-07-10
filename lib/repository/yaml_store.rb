@@ -2,7 +2,7 @@
 
 module ReleaseManager
   module Repository
-    module ComponentYamlStore
+    module YamlStore
       STORE_FILE = TMP_DIR.join('store.yaml')
 
       class << self
@@ -18,9 +18,15 @@ module ReleaseManager
         def read
           $/ = "\n\n"
           file = File.open(STORE_FILE, 'r')
-          result = file.map { |obj| YAML.safe_load(obj, [ReleaseManager::Entities::Component, Pathname]) }
+          result = file.map { |obj| YAML.safe_load(obj, permitted) }
           file.close
           result
+        end
+
+        private
+
+        def permitted
+          [ReleaseManager::Entities::Component, ReleaseManager::Entities::Bumper, Pathname]
         end
       end
     end

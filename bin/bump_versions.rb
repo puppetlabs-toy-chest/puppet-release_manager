@@ -2,5 +2,5 @@
 
 require_relative '../lib/release_manager'
 
-request = OpenStruct.new
-ReleaseManager::Actions::VersionBumper.new(request).run
+request = OpenStruct.new # to keep the resemblance of an interface
+ReleaseManager::Actions::VersionBumper.new(request).run_async
