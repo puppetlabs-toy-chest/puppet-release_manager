@@ -8,8 +8,8 @@ describe ReleaseManager::Common::ComponentsReader do
   end
 
   context 'behaviour' do
-    let(:facter) { subject.components.last }
-    let(:runtime) { subject.components.first }
+    let(:facter) { subject.components.find { |component| component.name =~ /facter/ } }
+    let(:runtime) { subject.components.find { |component| component.name =~ /puppet-runtime/ } }
 
     it 'correctly reads the components' do
       expect(facter).to be_a_kind_of(ReleaseManager::Entities::Component)
