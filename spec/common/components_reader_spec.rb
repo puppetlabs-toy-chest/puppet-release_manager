@@ -8,8 +8,8 @@ describe ReleaseManager::Common::ComponentsReader do
   end
 
   context 'behaviour' do
-    let(:facter) { subject.components.first }
-    let(:runtime) { subject.components.last }
+    let(:facter) { subject.components.last }
+    let(:runtime) { subject.components.first }
 
     it 'correctly reads the components' do
       expect(facter).to be_a_kind_of(ReleaseManager::Entities::Component)
